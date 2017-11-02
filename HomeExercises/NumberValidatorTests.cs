@@ -7,25 +7,25 @@ namespace HomeExercises
 {
 	public class NumberValidatorTests
 	{
-	    [TestCase(-3, 2, true, TestName = "Precision must be a positive number")]
-	    [TestCase(3, -2, true, TestName = "Scale must be a non-negative number")]
-	    [TestCase(3, 5, true, TestName = "Scale less or equal than precision")]
+	    [TestCase(-3, 2, true, TestName = "Precision is negative number expected ArgumentException")]
+	    [TestCase(3, -2, true, TestName = "Scale is negative number expected ArgumentException")]
+	    [TestCase(3, 5, true, TestName = "Scale is longer than precision expected ArgumentException")]
 	    public void IncorrectArgs_Expect_ArgumentException(int precision, int scale, bool onlyPositive)
 	    {
 	        Action act = () => new NumberValidator(precision, scale, onlyPositive);
 	        act.ShouldThrow<ArgumentException>();
 	    }
 
-        [TestCase(4, 2, true, "0", ExpectedResult = true, TestName = "Correct work without fracPart")]
-        [TestCase(4, 2, true, "0,3", ExpectedResult = true, TestName = "Correct work with comma")]
-        [TestCase(4, 2, true, "+0.3", ExpectedResult = true, TestName = "'+' in intPart")]
-        [TestCase(3, 2, true, "00.00", ExpectedResult = false, TestName = "Long number")]
-        [TestCase(4, 2, false, "-0.3", ExpectedResult = true, TestName = "Negative number")]
-        [TestCase(4, 2, true, "-0.3", ExpectedResult = false, TestName = "Negative number with onlyPositive flag")]
-        [TestCase(6, 2, true, "0.3333", ExpectedResult = false, TestName = "Long fracPart")]
-        [TestCase(3, 2, true, "a.sd", ExpectedResult = false, TestName = "Incorrect value")]
-        [TestCase(3, 2, true, "", ExpectedResult = false, TestName = "Value is null")]
-        [TestCase(3, 2, true, null, ExpectedResult = false, TestName = "Value is empty")]
+        [TestCase(4, 2, true, "0", ExpectedResult = true, TestName = "Number without fractional part should be validated")]
+        [TestCase(4, 2, true, "0,3", ExpectedResult = true, TestName = "Number with comma should be validated")]
+        [TestCase(4, 2, true, "+0.3", ExpectedResult = true, TestName = "Number with '+' in int part should be validated")]
+        [TestCase(4, 2, false, "-0.3", ExpectedResult = true, TestName = "Negative number should be validated")]
+        [TestCase(3, 2, true, "00.00", ExpectedResult = false, TestName = "Number is longer than precision should not be validated")]
+        [TestCase(4, 2, true, "-0.3", ExpectedResult = false, TestName = "Negative number with only positive flag should not be validated")]
+        [TestCase(6, 2, true, "0.3333", ExpectedResult = false, TestName = "Fractional part is longer than scale should not be validated")]
+        [TestCase(3, 2, true, "abc", ExpectedResult = false, TestName = "Not number should not be validated")]
+        [TestCase(3, 2, true, "", ExpectedResult = false, TestName = "Null value should not be validated")]
+        [TestCase(3, 2, true, null, ExpectedResult = false, TestName = "Empty value should not be validated")]
         public bool CorrectArgs_Expect_CorrectWork(int precision, int scale, bool onlyPositive, string value)
         {
             var validator = new NumberValidator(precision, scale, onlyPositive);
